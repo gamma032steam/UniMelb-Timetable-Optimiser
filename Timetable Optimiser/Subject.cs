@@ -18,17 +18,17 @@ namespace Timetable_Optimiser
         {
             get
             {
-                Dictionary<string, int> TypeInfo = new Dictionary<string, int>(); 
+                Dictionary<string, int> typeInfo = new Dictionary<string, int>(); 
                 foreach (Class c in Classes)
                 {
-                    if (!TypeInfo.ContainsKey(c.TypeCode))
+                    if (!typeInfo.ContainsKey(c.ClassCode))
                     {
-                        TypeInfo[c.TypeCode] = 0;
+                        typeInfo[c.ClassCode] = 0;
                     }
-                    TypeInfo[c.TypeCode]++;
+                    typeInfo[c.ClassCode]++;
                 }
 
-                return TypeInfo;
+                return typeInfo;
             }
         } 
 

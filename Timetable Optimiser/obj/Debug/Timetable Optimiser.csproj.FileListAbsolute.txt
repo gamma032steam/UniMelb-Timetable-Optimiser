@@ -13,3 +13,24 @@ C:\Users\rohyl\Downloads\Timetable Optimiser\obj\Debug\Timetable Optimiser.cspro
 C:\Users\rohyl\Downloads\Timetable Optimiser\obj\Debug\Timetable Optimiser.csproj.CoreCompileInputs.cache
 C:\Users\rohyl\Downloads\Timetable Optimiser\obj\Debug\Timetable Optimiser.exe
 C:\Users\rohyl\Downloads\Timetable Optimiser\obj\Debug\Timetable Optimiser.pdb
+C:\Users\rohyl\Downloads\Timetable Optimiser\bin\Debug\Syncfusion.Grid.Base.dll
+C:\Users\rohyl\Downloads\Timetable Optimiser\bin\Debug\Syncfusion.Grid.Windows.dll
+C:\Users\rohyl\Downloads\Timetable Optimiser\bin\Debug\Syncfusion.Schedule.Base.dll
+C:\Users\rohyl\Downloads\Timetable Optimiser\bin\Debug\Syncfusion.Schedule.Windows.dll
+C:\Users\rohyl\Downloads\Timetable Optimiser\bin\Debug\Syncfusion.Shared.Base.dll
+C:\Users\rohyl\Downloads\Timetable Optimiser\bin\Debug\Syncfusion.Shared.Windows.dll
+C:\Users\rohyl\Downloads\Timetable Optimiser\bin\Debug\Syncfusion.Tools.Windows.dll
+C:\Users\rohyl\Downloads\Timetable Optimiser\bin\Debug\Syncfusion.SpellChecker.Base.dll
+C:\Users\rohyl\Downloads\Timetable Optimiser\bin\Debug\EnvDTE.dll
+C:\Users\rohyl\Downloads\Timetable Optimiser\bin\Debug\Syncfusion.Tools.Base.dll
+C:\Users\rohyl\Downloads\Timetable Optimiser\bin\Debug\stdole.dll
+C:\Users\rohyl\Downloads\Timetable Optimiser\bin\Debug\Syncfusion.Grid.Base.xml
+C:\Users\rohyl\Downloads\Timetable Optimiser\bin\Debug\Syncfusion.Grid.Windows.xml
+C:\Users\rohyl\Downloads\Timetable Optimiser\bin\Debug\Syncfusion.Schedule.Base.xml
+C:\Users\rohyl\Downloads\Timetable Optimiser\bin\Debug\Syncfusion.Schedule.Windows.xml
+C:\Users\rohyl\Downloads\Timetable Optimiser\bin\Debug\Syncfusion.Shared.Base.xml
+C:\Users\rohyl\Downloads\Timetable Optimiser\bin\Debug\Syncfusion.Shared.Windows.xml
+C:\Users\rohyl\Downloads\Timetable Optimiser\bin\Debug\Syncfusion.Tools.Windows.xml
+C:\Users\rohyl\Downloads\Timetable Optimiser\bin\Debug\Syncfusion.SpellChecker.Base.xml
+C:\Users\rohyl\Downloads\Timetable Optimiser\bin\Debug\Syncfusion.Tools.Base.xml
+C:\Users\rohyl\Downloads\Timetable Optimiser\bin\Debug\Syncfusion.Grid.Windows.XmlSerializers.dll

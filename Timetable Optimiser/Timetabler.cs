@@ -6,8 +6,10 @@ using System.Drawing;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Calendar;
 using HtmlAgilityPack;
 // ReSharper disable All
 
@@ -15,22 +17,60 @@ namespace Timetable_Optimiser
 {
     public partial class Timetabler : Form
     {
+        List<Appointment> m_Appointments;
+
         public Timetabler()
         {
             InitializeComponent();
+            m_Appointments = new List<Appointment>();
+            dayView1.ResolveAppointments += DayView1_ResolveAppointments;
         }
 
-        public bool DoesClash(Class a, Class b)
+        private List<Timetable> generatedTables = new List<Timetable>();
+        private int currentTable = 0;
+
+        private void DayView1_ResolveAppointments(object sender, ResolveAppointmentsEventArgs args)
         {
-            return (a.Day == b.Day) && (a.Start < b.End && b.Start < a.End);
+            args.Appointments = m_Appointments;
         }
 
         private void Timetabler_Load(object sender, EventArgs e)
         {
-            List<string> subjectCodes = new List<string> { "COMP20003", "ELEN20005", "ENGR20004", "SWEN20003"};
-            List<Subject> allSubjects = LoadSubjects(subjectCodes);
+            List<string> rohylCodes = new List<string> { "COMP20003", "ELEN20005", "ENGR20004", "SWEN20003" };
+            List<string> leeleeCodes = new List<string> { "ARCH20002 ", "ABPL20036", "ABPL20033", "PLAN20002" };
+            List<string> mahaCodes = new List<string> { "ECON20001 ", "MGMT20001", "SPAN10002" };
+            List<string> davidCodes = new List<string> { "CONS20002", "ABPL20053", "PLAN20002", "GEOM20015" };
+            List<string> naufalCodes = new List<string> { "COMP30020", "COMP30026", "COMP30022", "ECOM30004" };
+            List<string> habibCodes = new List<string> { "MCEN30020", "ENGR30003", "MCEN30019", "ELEN90066" };
+            List<Subject> allSubjects = LoadSubjects(naufalCodes);
             var cleansedSubjects = ApplyRestrictions(allSubjects);
-            GeneratePermutations(cleansedSubjects);
+            switch (cleansedSubjects.Item2) 
+            {
+                case RestrictionOutcome.Invalid:
+                    label2.Text = "The restrictions in place are INVALID!";
+                    label2.ForeColor = Color.Red;
+                    break;
+                case RestrictionOutcome.Valid:
+                    label2.Text = "The restrictions in place are VALID :)";
+                    label2.ForeColor = Color.DarkGreen;
+                    break;
+            }
+            var generatedTimeTables = GeneratePermutations(cleansedSubjects.Item1);
+
+            var optimisedTimeTables = generatedTimeTables.OrderBy(x => x.VariableClassDaySpan).OrderBy(x => x.ClashCount)
+                .OrderBy(x=>
+                {
+                    if (x._daySpans.ContainsKey(DayOfWeek.Wednesday))
+                    {
+                        Timetable.ClassSpan span = x._daySpans[DayOfWeek.Wednesday];
+                        return (span.Last - span.First).TotalHours;
+                    }
+                    else return 0;
+                }).ToList();
+
+            TimetableStatistics(optimisedTimeTables);
+            generatedTables = optimisedTimeTables;
+            ShowTimetable(optimisedTimeTables[0]);
         }
 
         public static List<List<T>> AllCombinationsOf<T>(params List<T>[] sets)
@@ -52,13 +92,13 @@ namespace Timetable_Optimiser
             (List<List<T>> combinations, List<T> set)
         {
             var newCombinations = from value in set
-                from combination in combinations
-                select new List<T>(combination) { value };
+                                  from combination in combinations
+                                  select new List<T>(combination) { value };
 
             return newCombinations.ToList();
         }
 
-        private List<List<Class>> GeneratePermutations(List<Subject> subjects)
+        private List<Timetable> GeneratePermutations(List<Subject> subjects)
         {
             /* Stores all variable classes by type
              i.e:
@@ -71,17 +111,99 @@ namespace Timetable_Optimiser
             {
                 foreach (var classType in sub.ClassTypes)
                 {
-                    var typeClasses = sub.Classes.Where(x => x.TypeCode == classType.Key).ToList();
+                    var typeClasses = sub.Classes.Where(x => x.ClassCode == classType.Key).ToList();
                     setPool.Add(typeClasses);
-                }   
+                }
             }
 
             int count = 1;
             setPool.ForEach(x => count *= x.Count);
             Console.WriteLine($"This number: {count} should match ^ one.");
             var combinations = AllCombinationsOf(setPool.ToArray());
-            Console.WriteLine($"Thanks to the help of StackOverflow, namely https://stackoverflow.com/questions/545703/combination-of-listlistint, I just generated {combinations.Count()} permutations.");
-            return null;
+            List<Timetable> loadedTimetables = new List<Timetable>();
+            combinations.ForEach(classList => loadedTimetables.Add(new Timetable(classList)));
+            Console.WriteLine($"Thanks to the help of StackOverflow, namely Garry Shutler, I just generated {combinations.Count()} permutations.");
+            return loadedTimetables;
+        }
+
+
+        private void TimetableStatistics(List<Timetable> tables)
+        {
+            /* Thanks, https://stackoverflow.com/questions/17434119/how-to-get-frequency-of-elements-from-list-in-c-sharp */
+            var clashFrequencies = tables.GroupBy(x => x.ClashCount).ToDictionary(x => x.Key, x => x.Count());
+            Console.WriteLine("\nClash Statistics:");
+            foreach (var clashType in clashFrequencies.OrderBy(x => x.Key))
+            {
+                Console.WriteLine($"There are {clashType.Value} timetables with {clashType.Key} clashes.");
+            }
+
+            var dayOffFrequencies = tables.GroupBy(x => x.DaysOff).ToDictionary(x => x.Key, x => x.Count());
+
+            Console.WriteLine("\nDays Off Statistics:");
+            foreach (var dayOffCount in dayOffFrequencies.OrderBy(x => x.Key))
+            {
+                Console.WriteLine($"There are {dayOffCount.Value} timetables with {dayOffCount.Key} days off.");
+                if (dayOffCount.Key == 0 && dayOffFrequencies.Count == 1)
+                {
+                    Console.WriteLine("Oof, that must suck :/");
+                }
+            }
+
+            Console.WriteLine("\nLongest Day Statistics:");
+            var longestDayFrequency = tables.GroupBy(x => x.LongestDay).ToDictionary(x => x.Key, x => x.Count());
+            foreach (var longestDay in longestDayFrequency.OrderBy(x => x.Key))
+            {
+                Console.WriteLine(
+                    $"There are {longestDay.Value} timetables with the longest day being {longestDay.Key} hours.");
+            }
+
+            Console.WriteLine("\nShortest Day Statistics:");
+            var shortestDayFrequency = tables.GroupBy(x => x.ShortestDay).ToDictionary(x => x.Key, x => x.Count());
+            foreach (var shortestDay in shortestDayFrequency.OrderBy(x => x.Key))
+            {
+                Console.WriteLine(
+                    $"There are {shortestDay.Value} timetables with the shortest day being {shortestDay.Key} hours.");
+            }
+
+            Console.WriteLine("\nVariable Class Statistics:");
+            var variableSpanCounts = tables.GroupBy(x => x.VariableClassDaySpan).ToDictionary(x => x.Key, x => x.Count());
+            foreach (var variableSpanCount in variableSpanCounts.OrderBy(x => x.Key))
+            {
+                Console.WriteLine(
+                    $"There are {variableSpanCount.Value} timetables with variable classes spanning {variableSpanCount.Key} days.");
+            }
+        }
+
+        private void ShowTimetable(Timetable timetable)
+        {
+            m_Appointments.Clear();
+            label1.Text = $"Timetable {currentTable}/{generatedTables.Count}";
+            foreach (var c in timetable.Classes)
+            {
+                RenderClass(c);
+            }
+            dayView1.Renderer = new Office11Renderer();
+        }
+
+        private void RenderClass(Class c)
+        {
+            Appointment m_Appointment = new Appointment();
+            DateTime startOfWeek = DateTime.Today;
+            int increment = (int)c.Day - 1;
+            DateTime classDay = startOfWeek.AddDays(increment);
+            m_Appointment.StartDate = classDay + c.Start;
+            m_Appointment.EndDate = classDay + c.End;
+            switch (c.Type)
+            {
+                case Class.ClassType.Variable:
+                    m_Appointment.Color = Color.CadetBlue;
+                    break;
+                case Class.ClassType.Mandatory:
+                    m_Appointment.Color = Color.Crimson;
+                    break;
+            }
+            m_Appointment.Title = c.Type + Environment.NewLine + c.Name + Environment.NewLine + c.SubjectCode + Environment.NewLine + c.Location;
+            m_Appointments.Add(m_Appointment);
         }
 
         private List<Subject> LoadSubjects(List<string> subjectCodes)
@@ -91,12 +213,17 @@ namespace Timetable_Optimiser
             return allSubjects;
         }
 
+        enum RestrictionOutcome
+        {
+            Valid, Invalid
+        }
         /* Applying Restrictions */
-            private List<Subject> ApplyRestrictions(List<Subject> subjects)
+        private Tuple<List<Subject>, RestrictionOutcome>ApplyRestrictions(List<Subject> subjects)
         {
             List<Subject> restrictedSubjects = subjects.Clone().ToList();
-            TimeSpan MorningStart = new TimeSpan(9, 0, 0);
-            TimeSpan AfternoonFinish = new TimeSpan(17, 0, 0);
+            RestrictionOutcome restOut = RestrictionOutcome.Valid;
+            TimeSpan MorningStart = new TimeSpan(10, 0, 0);
+            TimeSpan AfternoonFinish = new TimeSpan(20, 0, 0);
             List<string> deleteNames = new List<string> { "Breakout", "Breakout01", "Breakout1" };
 
             PermutationAnalysis(restrictedSubjects);
@@ -111,17 +238,19 @@ namespace Timetable_Optimiser
                 {
                     Class c = sub.Classes[index];
                     /* Remove weird classes like "breakout" */
-                    if (deleteNames.Contains(c.TypeCode))
+                    if (deleteNames.Contains(c.ClassCode))
                     {
                         sub.Classes.Remove(c);
                     }
-                    else
-                    if (typeCounts[c.TypeCode] == 1)
+                    else if (typeCounts[c.ClassCode] == 1)
                     {
+                        c.Type = Class.ClassType.Mandatory;
                         tempSubject.AddClass(c);
                         sub.Classes.Remove(c);
                         Console.WriteLine(c.ShortDescription + " is mandatory.");
                     }
+                    else
+                        c.Type = Class.ClassType.Variable;
                 }
 
                 mandatorySubjectClasses.Add(tempSubject);
@@ -138,7 +267,7 @@ namespace Timetable_Optimiser
                 for (var index = sub.Classes.Count - 1; index >= 0; index--)
                 {
                     Class c = sub.Classes[index];
-                    if (c.Start < MorningStart || c.Start > AfternoonFinish)
+                    if (c.Start < MorningStart || c.End > AfternoonFinish)
                     {
                         //DumpClasses(new List<Class> {c});
                         sub.Classes.Remove(c);
@@ -147,8 +276,9 @@ namespace Timetable_Optimiser
 
                 int afterClassCount = sub.Classes.Count;
                 int afterClassTypeCount = sub.ClassTypes.Count;
-                Console.WriteLine($"\nRemoved {beforeClassCount - afterClassCount} classes from {sub.Code} due to restrictions.");
-                Console.WriteLine($"Removed {afterClassTypeCount - beforeClassTypeCount} unique class types from {sub.Code} due to restrictions.");
+                Console.WriteLine($"\nRemoved {beforeClassCount - afterClassCount} classes from {sub.Code} due to morning/afternoon time restrictions.");
+                if (afterClassTypeCount - beforeClassCount > 0)
+                    Console.WriteLine($"[ALERT!] Removed {afterClassTypeCount - beforeClassTypeCount} unique class types from {sub.Code} due to morning/afternoon time restrictions.");
             }
 
             /* Removing classes that clash with mandatory classes */
@@ -161,10 +291,10 @@ namespace Timetable_Optimiser
                 {
                     Class var = sub.Classes[i];
                     var allMandatoryClasses = new List<Class>();
-                    mandatorySubjectClasses.ForEach(x=>allMandatoryClasses.AddRange(x.Classes));
+                    mandatorySubjectClasses.ForEach(x => allMandatoryClasses.AddRange(x.Classes));
                     foreach (var mand in allMandatoryClasses)
                     {
-                        if (DoesClash(var, mand))
+                        if (mand.DoesClash(var))
                         {
                             Console.WriteLine($"\nVariable Class: {var.ShortDescription} clashes with Mandatory Class: {mand.ShortDescription}");
                             sub.Classes.Remove(var);
@@ -174,12 +304,17 @@ namespace Timetable_Optimiser
                 int afterClassCount = sub.Classes.Count;
                 int afterClassTypeCount = sub.ClassTypes.Count;
                 Console.WriteLine($"\nRemoved {beforeClassCount - afterClassCount} classes from {sub.Code} due to clashes.");
-                Console.WriteLine($"Removed {afterClassTypeCount - beforeClassTypeCount} unique class types from {sub.Code} due to clashes."); 
+                if (afterClassTypeCount - beforeClassTypeCount > 0)
+                {
+                    restOut = RestrictionOutcome.Invalid;
+                    Console.WriteLine(
+                        $"[ALERT!] Removed {afterClassTypeCount - beforeClassTypeCount} unique class types from {sub.Code} due to clashes. This is bad.");
+                }
             }
 
             classCount = 0;
             restrictedSubjects.ForEach(x => classCount += x.Classes.Count());
-            Console.WriteLine($"\nAfter to pruning there were {classCount} variable classes in total.\n");
+            Console.WriteLine($"\nAfter pruning there are {classCount} variable classes in total.\n");
             /* Re-merge mandatory classes with pruned variable classes */
             foreach (var sub in mandatorySubjectClasses)
             {
@@ -189,14 +324,13 @@ namespace Timetable_Optimiser
                     {
                         foreach (var subClass in sub.Classes)
                         {
-
                             sub2.AddClass(subClass);
                         }
                     }
                 }
             }
             PermutationAnalysis(restrictedSubjects);
-            return restrictedSubjects;
+            return new Tuple<List<Subject>, RestrictionOutcome>(restrictedSubjects, restOut);
         }
 
         private void PermutationAnalysis(List<Subject> subjects)
@@ -211,7 +345,7 @@ namespace Timetable_Optimiser
                     Console.WriteLine($"-> {types.Value} possibilities for {types.Key}");
                 }
             }
-            Console.WriteLine("Total Permutations: " + permutations);
+            Console.WriteLine("Total Permutations: " + permutations + Environment.NewLine);
         }
 
         private Subject LoadSubject(string subjectCode)
@@ -250,7 +384,7 @@ namespace Timetable_Optimiser
             {
                 Console.WriteLine("--------------------------");
                 Console.WriteLine(c.FullCode);
-                Console.WriteLine(c.TypeCode);
+                Console.WriteLine(c.ClassCode);
                 Console.WriteLine(c.Name);
                 Console.WriteLine(c.Location);
                 Console.WriteLine(c.Day);
@@ -259,6 +393,42 @@ namespace Timetable_Optimiser
                 Console.WriteLine("--------------------------");
             }
         }
+
+        private bool stop = false;
+        private void btn_Next_Click(object sender, EventArgs e)
+        {
+            stop = false;
+            new Thread(() =>
+            {
+                int max = generatedTables.Count;
+                int i = 0;
+                while (!stop && i++ < max)
+                {
+                    Invoke((MethodInvoker)delegate { ShowTimetable(generatedTables[++currentTable]); });
+                    Thread.Sleep(500);
+                }
+            }).Start();
+        }
+
+        private void btn_Prev_Click(object sender, EventArgs e)
+        {
+            if (currentTable != 0)
+            {
+                ShowTimetable(generatedTables[--currentTable]);
+            }
+        }
+
+        private void btn_Stop_Click(object sender, EventArgs e)
+        {
+            stop = true;
+
+        }
+
+        private void Btn_Next_Click_1(object sender, EventArgs e)
+        {
+            if (currentTable < generatedTables.Count)
+                ShowTimetable(generatedTables[++currentTable]);
+        }
     }
     static class Extensions
     {
@@ -266,6 +436,10 @@ namespace Timetable_Optimiser
         {
             return listToClone.Select(item => (T)item.Clone()).ToList();
         }
-
+        public static DateTime StartOfWeek(this DateTime dt, DayOfWeek startOfWeek)
+        {
+            int diff = (7 + (dt.DayOfWeek - startOfWeek)) % 7;
+            return dt.AddDays(-1 * diff).Date;
+        }
     }
 }

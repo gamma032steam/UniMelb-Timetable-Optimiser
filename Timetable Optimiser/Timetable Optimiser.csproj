@@ -35,6 +35,13 @@
     <Reference Include="HtmlAgilityPack, Version=1.8.4.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
       <HintPath>..\packages\HtmlAgilityPack.1.8.4\lib\Net45\HtmlAgilityPack.dll</HintPath>
     </Reference>
+    <Reference Include="Syncfusion.Grid.Base, Version=16.2460.0.41, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89" />
+    <Reference Include="Syncfusion.Grid.Windows, Version=16.2460.0.41, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89" />
+    <Reference Include="Syncfusion.Schedule.Base, Version=16.2460.0.41, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89" />
+    <Reference Include="Syncfusion.Schedule.Windows, Version=16.2460.0.41, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL" />
+    <Reference Include="Syncfusion.Shared.Base, Version=16.2460.0.41, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89" />
+    <Reference Include="Syncfusion.Shared.Windows, Version=16.2460.0.41, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89" />
+    <Reference Include="Syncfusion.Tools.Windows, Version=16.2460.0.41, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -50,6 +57,7 @@
   <ItemGroup>
     <Compile Include="Class.cs" />
     <Compile Include="Subject.cs" />
+    <Compile Include="Timetable.cs" />
     <Compile Include="Timetabler.cs">
       <SubType>Form</SubType>
     </Compile>
