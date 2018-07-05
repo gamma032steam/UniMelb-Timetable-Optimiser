@@ -17,16 +17,25 @@ using System.Windows.Shapes;
 using Syncfusion.SfSkinManager;
 using Syncfusion.UI.Xaml.Schedule;
 using Syncfusion.Windows.Controls;
+using Syncfusion.Windows.Controls.Input;
 using Syncfusion.Windows.Shared;
 using Color = System.Drawing.Color;
 
 namespace UoM_Timetable_Optimiser
 {
+    public class Employee
+    {
+        public string Email { get; set; }
+        public string Name { get; set; }
+    }
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow
     {
+        private List<SubjectListInformation> SubjectList;
+
         private List<Timetable> _generatedTables = new List<Timetable>();
         private static Dictionary<OptimisationType, string> _optimisationStrings;
         private readonly ObservableCollection<Subject> _allSubjects;
@@ -35,12 +44,14 @@ namespace UoM_Timetable_Optimiser
 
         public MainWindow()
         {
+
             _allSubjects = new ObservableCollection<Subject>();
             _currentOptimisationStrings = new ObservableCollection<string>();
             SfSkinManager.ApplyStylesOnApplication = true;
+
             InitializeComponent();
             dataGridClasses.ItemsSource = _allSubjects;
-            lstoptimisationStrings.ItemsSource = _currentOptimisationStrings;
+            lstOptimisationStrings.ItemsSource = _currentOptimisationStrings;
             _optimisationStrings = new Dictionary<OptimisationType, string>()
             {
                 {OptimisationType.Cram, "Cram into less days"},
@@ -52,10 +63,10 @@ namespace UoM_Timetable_Optimiser
             Style itemContainerStyle = new Style(typeof(ListBoxItem));
             itemContainerStyle.Setters.Add(new Setter(ListBoxItem.AllowDropProperty, true));
             itemContainerStyle.Setters.Add(new EventSetter(ListBoxItem.MouseMoveEvent,
-                new MouseEventHandler(s_PreviewMouseMoveEvent)));
+                new MouseEventHandler(S_PreviewMouseMoveEvent)));
             itemContainerStyle.Setters.Add(new EventSetter(ListBoxItem.DropEvent,
-                new DragEventHandler(lstoptimisationStrings_Drop)));
-            lstoptimisationStrings.ItemContainerStyle = itemContainerStyle;
+                new DragEventHandler(lstOptimisationStrings_Drop)));
+            lstOptimisationStrings.ItemContainerStyle = itemContainerStyle;
 
             timePickerStart.Value = new TimeSpan(9, 00, 00);
             timePickerFinish.Value = new TimeSpan(17, 0, 00);
@@ -76,9 +87,23 @@ namespace UoM_Timetable_Optimiser
             List<string> kevinCodes = new List<string> { "COMP30026", "SWEN30006", "MAST20026", "MAST20005" };
             /* end list */
             //LoadSubjects(leeleeCodes, Uni.Melbourne);
+            new Thread(() =>
+            {
+                SubjectListUpdater.UpdateCurrentSubjectList();
+                Dispatcher.Invoke(() =>
+                {
+                    SubjectList = SubjectListUpdater.subjectInformation;
+                    txt_subjectAdd.SuggestionMode = SuggestionMode.Contains;
+                    txt_subjectAdd.AutoCompleteMode = AutoCompleteMode.Suggest;
+                    txt_subjectAdd.AutoCompleteSource = SubjectList;
+                    txt_subjectAdd.SearchItemPath = "FullName";
+                });
+            }).Start();
+
+
         }
 
-        void s_PreviewMouseMoveEvent(object sender, MouseEventArgs e)
+        void S_PreviewMouseMoveEvent(object sender, MouseEventArgs e)
         {
             if (sender is ListBoxItem && e.LeftButton == MouseButtonState.Pressed)
             {
@@ -88,13 +113,13 @@ namespace UoM_Timetable_Optimiser
             }
         }
 
-        void lstoptimisationStrings_Drop(object sender, DragEventArgs e)
+        void lstOptimisationStrings_Drop(object sender, DragEventArgs e)
         {
             string droppedData = e.Data.GetData(typeof(string)) as string;
             string target = ((ListBoxItem)(sender)).DataContext as string;
 
-            int removedIdx = lstoptimisationStrings.Items.IndexOf(droppedData);
-            int targetIdx = lstoptimisationStrings.Items.IndexOf(target);
+            int removedIdx = lstOptimisationStrings.Items.IndexOf(droppedData);
+            int targetIdx = lstOptimisationStrings.Items.IndexOf(target);
 
             if (removedIdx < targetIdx)
             {
@@ -212,7 +237,19 @@ namespace UoM_Timetable_Optimiser
                 MessageBox.Show("Re-apply to Melb <3");
                 Environment.Exit(0);
             }
-            new Thread(() => subjectCodes.ForEach(x => _allSubjects.Add(UniMelbScraper.LoadSubject(x)))).Start();
+            new Thread(() =>
+            {
+                subjectCodes.ForEach(x =>
+                {
+                    Subject foundSubject = UniMelbScraper.LoadSubject(x);
+                    if (foundSubject == null)
+                    {
+                        Dispatcher.Invoke(() => MessageBox.Show("There was an error trying to retrieve the subject's timetable :/\nTry again later."));
+                    }
+                    else
+                        _allSubjects.Add(foundSubject);
+                });
+            }).Start();
         }
 
         private void btn_Next_Click(object sender, RoutedEventArgs e)
@@ -238,6 +275,40 @@ namespace UoM_Timetable_Optimiser
             else
             {
                 btn_Prev.IsEnabled = false;
+            }
+        }
+
+        private void btn_addSubject_Click(object sender, RoutedEventArgs e)
+        {
+            string subjectCode = txt_subjectAdd.Text;
+            var stringSplit = subjectCode.Split('-');
+            if (stringSplit.Length > 0)
+            {
+                string possibleCode = stringSplit[0];
+                if (SubjectList.All(x => x.Code != possibleCode.Trim()))
+                {
+                    MessageBox.Show("Cannot identify a subject code from what has been entered.\nTry just typing the subject code.");
+                    return;
+                }
+                subjectCode = possibleCode;
+            }
+            LoadSubjects(new List<string> { subjectCode }, Uni.Melbourne);
+        }
+
+        private void btn_removeSubject_Click(object sender, RoutedEventArgs e)
+        {
+            Subject sub = (Subject)dataGridClasses.SelectedItem;
+            if (sub == null)
+            {
+
+            }
+            else
+            {
+                _allSubjects.Remove(sub);
+                if (_allSubjects.Count == 0)
+                {
+                    btn_removeSubject.IsEnabled = false;
+                }
             }
         }
 
@@ -305,13 +376,13 @@ namespace UoM_Timetable_Optimiser
         {
             List<OptimisationType> optimisations = new List<OptimisationType>();
             List<DayOfWeek> dayAvoidOrder = new List<DayOfWeek>();
-            if (lstoptimisationStrings.Items.Count == 0)
+            if (lstOptimisationStrings.Items.Count == 0)
             {
                 DayAvoidOrder = dayAvoidOrder;
                 return optimisations;
             }
 
-            foreach (string str in lstoptimisationStrings.Items)
+            foreach (string str in lstOptimisationStrings.Items)
             {
                 OptimisationType type;
                 if (str.StartsWith("Avoid"))
@@ -368,27 +439,5 @@ namespace UoM_Timetable_Optimiser
             }
         }
 
-        private void btn_addSubject_Click(object sender, RoutedEventArgs e)
-        {
-            string subjectCode = txt_subjectAdd.Text;
-            LoadSubjects(new List<string> { subjectCode }, Uni.Melbourne);
-        }
-
-        private void btn_removeSubject_Click(object sender, RoutedEventArgs e)
-        {
-            Subject sub = (Subject)dataGridClasses.SelectedItem;
-            if (sub == null)
-            {
-
-            }
-            else
-            {
-                _allSubjects.Remove(sub);
-                if (_allSubjects.Count == 0)
-                {
-                    btn_removeSubject.IsEnabled = false;
-                }
-            }
-        }
     }
 }

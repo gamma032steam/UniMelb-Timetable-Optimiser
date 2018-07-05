@@ -94,3 +94,5 @@ C:\Users\rohyl\Documents\GitHub\UniMelb-Timetable-Optimiser\UoM-Timetable-Optimi
 C:\Users\rohyl\Documents\GitHub\UniMelb-Timetable-Optimiser\UoM-Timetable-Optimiser\obj\Debug\UoM-Timetable-Optimiser.csproj.CoreCompileInputs.cache
 C:\Users\rohyl\Documents\GitHub\UniMelb-Timetable-Optimiser\UoM-Timetable-Optimiser\obj\Debug\UoM-Timetable-Optimiser.exe
 C:\Users\rohyl\Documents\GitHub\UniMelb-Timetable-Optimiser\UoM-Timetable-Optimiser\obj\Debug\UoM-Timetable-Optimiser.pdb
+C:\Users\rohyl\Documents\GitHub\UniMelb-Timetable-Optimiser\UoM-Timetable-Optimiser\bin\Debug\Newtonsoft.Json.dll
+C:\Users\rohyl\Documents\GitHub\UniMelb-Timetable-Optimiser\UoM-Timetable-Optimiser\bin\Debug\Newtonsoft.Json.xml

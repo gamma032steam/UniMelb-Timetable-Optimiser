@@ -8,8 +8,7 @@
         Title="University of Melbourne Timetable Optimiser" Width="1137" ShowIcon="False" TitleTextAlignment="Left"
         AllowsTransparency="True"
         CornerRadius="8" Height="1018" WindowStartupLocation="CenterScreen" WindowState="Maximized" >
-    <Window.Resources>
-
+    <Window.Resources> 
         <Style TargetType="syncfusion:HeaderTitleBarView">
             <Setter Property="Foreground" Value="#373837"/>
             <Setter Property="Template">
@@ -86,7 +85,9 @@
                             <syncfusion:GridTextColumn DisplayBinding="{Binding Classes.Count}" FilteredFrom="None" TextAlignment="Center"  HeaderText="Classes" />
                         </syncfusion:SfDataGrid.Columns>
                     </syncfusion:SfDataGrid>
-                    <syncfusion:SfTextBoxExt  Watermark="MAST10001" x:Name="txt_subjectAdd" Height="23" TextWrapping="Wrap" Margin="5" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" TextAlignment="Center"/>
+                    <syncfusion:SfTextBoxExt Name="txt_subjectAdd"
+                                          
+                                          Margin="5" />
                     <Canvas Height="36">
                         <Button x:Name="btn_addSubject" Content="Add Subject +" VerticalAlignment="Top" Click="btn_addSubject_Click" Background="White" Height="36" Canvas.Left="158" Canvas.Top="0" Width="152" HorizontalAlignment="Right"/>
                         <Button x:Name="btn_removeSubject" Content="Remove Subject -" VerticalAlignment="Top" Background="White" Height="36" Canvas.Left="0" Canvas.Top="0" Width="152" HorizontalAlignment="Left" Click="btn_removeSubject_Click" IsEnabled="False"/>
@@ -132,7 +133,7 @@
             </GroupBox>
             <Label Content="Optimisation Order" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,-1,0,0"/>
             <Label Content="Order your optimisation choices from first priority to last." HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0" FontSize="10" Foreground="#FF989898"/>
-            <ListBox x:Name="lstoptimisationStrings" Height="136" Margin="10"/>
+            <ListBox x:Name="lstOptimisationStrings" Height="136" Margin="10"/>
         </StackPanel>
     </Grid>
 </syncfusion:ChromelessWindow>

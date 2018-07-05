@@ -18,7 +18,7 @@ namespace UoM_Timetable_Optimiser
         public static Subject LoadSubject(string subjectCode)
         {
             /* Pretty clean method */
-            var html = $"https://sws.unimelb.edu.au/2018/Reports/List.aspx?objects={subjectCode}&weeks=1-52&days=1-7&periods=1-56&template=module_by_group_list";
+            var html = $"https://sws.unimelb.edu.au/2018/Reports/List.aspx?objects={subjectCode.Trim()}&weeks=1-52&days=1-7&periods=1-56&template=module_by_group_list";
             HtmlWeb web = new HtmlWeb();
             var htmlDoc = web.Load(html);
             if (htmlDoc.Text.Contains("Error processing page"))
@@ -29,6 +29,12 @@ namespace UoM_Timetable_Optimiser
             var classNodes = htmlDoc.DocumentNode.SelectNodes("//*[@class=\"cyon_table\"]/tbody/tr");
             List<Class> allClasses = new List<Class>();
             Dictionary<char, StreamContainer> streamContainer = new Dictionary<char, StreamContainer>();
+
+            if (classNodes == null)
+            {
+                return null;
+            }
+
             foreach (var childNode in classNodes)
             {
                 var informationNodes = childNode.SelectNodes(".//td");
