@@ -1,6 +1,0 @@
-C:\Users\rohyl\Downloads\DayView\bin\Debug\Calendar.DayView.dll
-C:\Users\rohyl\Downloads\DayView\bin\Debug\Calendar.DayView.pdb
-C:\Users\rohyl\Downloads\DayView\obj\Debug\DayView.csprojResolveAssemblyReference.cache
-C:\Users\rohyl\Downloads\DayView\obj\Debug\DayView.csproj.CoreCompileInputs.cache
-C:\Users\rohyl\Downloads\DayView\obj\Debug\Calendar.DayView.dll
-C:\Users\rohyl\Downloads\DayView\obj\Debug\Calendar.DayView.pdb
