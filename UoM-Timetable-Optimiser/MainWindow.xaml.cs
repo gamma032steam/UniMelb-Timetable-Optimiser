@@ -87,7 +87,7 @@ namespace UoM_Timetable_Optimiser
             List<string> rsem2Codes = new List<string> { "COMP10001", "PHYC10004", "ENGR10003", "MAST10007" };
             List<string> kevinCodes = new List<string> { "COMP30026", "SWEN30006", "MAST20026", "MAST20005" };
             /* end list */
-            //LoadSubjects(leeleeCodes, Uni.Melbourne);
+            /*LoadSubjects(rohylCodes, Uni.Melbourne); */
             new Thread(() =>
             {
                 SubjectListUpdater.UpdateCurrentSubjectList();
@@ -289,7 +289,7 @@ namespace UoM_Timetable_Optimiser
             string subjectCode = txt_subjectAdd.Text;
             txt_subjectAdd.Clear();
             var stringSplit = subjectCode.Split('-');
-            if (stringSplit.Length > 0)
+            if (stringSplit.Length > 1)
             {
                 string possibleCode = stringSplit[0];
                 if (SubjectList.All(x => x.Code != possibleCode.Trim()))

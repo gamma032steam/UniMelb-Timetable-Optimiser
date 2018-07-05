@@ -65,7 +65,7 @@
             <ColumnDefinition Width="332"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <syncfusion:SfSchedule x:Name="scheduleControl" FocusedMonth="GhostWhite" NonFocusedMonth="LightGray" ScheduleType="WorkWeek" WorkEndHour="18" WorkStartHour="9" FirstDayOfWeek="Monday" AllowEditing="False" ScrollViewer.VerticalScrollBarVisibility="Disabled" CurrentDateBackground="#FFF1F1F1" CurrentDateForeground="#FF606060" ShowAllDay="False" Margin="0,0,0,0.5" MinWidth="0" MinHeight="0" HorizontalAlignment="Center" Grid.Column="1" BorderBrush="Black" BorderThickness="10" Background="{x:Null}" HeaderBackground="#FFF1F1F1" Grid.Row="1" CellSelectionBrush="White" AppointmentSelectionBrush="{x:Null}" Grid.RowSpan="2" IsEnabled="False">
+        <syncfusion:SfSchedule x:Name="scheduleControl" FocusedMonth="GhostWhite" NonFocusedMonth="LightGray" ScheduleType="WorkWeek" WorkEndHour="18" WorkStartHour="9" FirstDayOfWeek="Monday" AllowEditing="False" ScrollViewer.VerticalScrollBarVisibility="Disabled" CurrentDateBackground="#FFF1F1F1" CurrentDateForeground="#FF606060" ShowAllDay="False" Margin="0,0,0,0.5" MinWidth="0" MinHeight="0" HorizontalAlignment="Center" Grid.Column="1" BorderBrush="Black" BorderThickness="10" Background="{x:Null}" HeaderBackground="#FFF1F1F1" Grid.Row="1" CellSelectionBrush="White" AppointmentSelectionBrush="{x:Null}" Grid.RowSpan="2">
             <syncfusion:SfSchedule.CollapsedHours>
                 <syncfusion:ScheduleCollapsedHour EndHour="7" Background="White"/>
                 <syncfusion:ScheduleCollapsedHour EndHour="24" StartHour="20" Background="White"/>
