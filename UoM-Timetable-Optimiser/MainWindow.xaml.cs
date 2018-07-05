@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Xml.Xsl;
 using Syncfusion.SfSkinManager;
 using Syncfusion.UI.Xaml.Schedule;
 using Syncfusion.Windows.Controls;
@@ -314,6 +315,11 @@ namespace UoM_Timetable_Optimiser
 
         private void btn_generatePermutations_Click(object sender, RoutedEventArgs e)
         {
+            if (_allSubjects.Count == 0)
+            {
+                MessageBox.Show("You must add some subjects before trying to optimise nothing.");
+                return;
+            }
             TimeSpan earliestStart = timePickerStart.Value.ToDateTime().TimeOfDay;
             TimeSpan latestFinish = timePickerFinish.Value.ToDateTime().TimeOfDay;
             /* TimeSpan earliestStart = new TimeSpan(9, 0, 0);
