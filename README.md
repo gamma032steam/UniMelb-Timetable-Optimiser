@@ -16,3 +16,5 @@ A variety of useful optimisations options are provided, namely:
 	 - Aims to reduce the number of consecutive classes for a user defined time span without a break. (e.g. no more than 3 hours without a break)
 ## Optimisation Order
 The general optimisations often have different priorities. These can be intuitively reordered before optimisation in terms of priority. 
+
+![Main UI Example](https://i.imgur.com/TvtEgE2.png)
