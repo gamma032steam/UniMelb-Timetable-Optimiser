@@ -87,7 +87,7 @@
                     </syncfusion:SfDataGrid>
                     <syncfusion:SfTextBoxExt Name="txt_subjectAdd"
                                           
-                                          Margin="5" />
+                                          Margin="5" KeyDown="txt_subjectAdd_KeyDown" />
                     <Canvas Height="36">
                         <Button x:Name="btn_addSubject" Content="Add Subject +" VerticalAlignment="Top" Click="btn_addSubject_Click" Background="White" Height="36" Canvas.Left="158" Canvas.Top="0" Width="152" HorizontalAlignment="Right"/>
                         <Button x:Name="btn_removeSubject" Content="Remove Subject -" VerticalAlignment="Top" Background="White" Height="36" Canvas.Left="0" Canvas.Top="0" Width="152" HorizontalAlignment="Left" Click="btn_removeSubject_Click" IsEnabled="False"/>

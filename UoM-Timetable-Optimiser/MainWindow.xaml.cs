@@ -55,10 +55,10 @@ namespace UoM_Timetable_Optimiser
             lstOptimisationStrings.ItemsSource = _currentOptimisationStrings;
             _optimisationStrings = new Dictionary<OptimisationType, string>()
             {
-                {OptimisationType.Cram, "Cram into less days"},
-                {OptimisationType.DayOptimisation, "Avoid days specified"},
+                {OptimisationType.Cram, "Cram Into Less Days"},
+                {OptimisationType.DayOptimisation, "Avoid Days Specified"},
                 {OptimisationType.LeastClashes, "Least Clashes"},
-                {OptimisationType.LongestRun, "Longest time without a break"}
+                {OptimisationType.LongestRun, "Longest Time Without a Break"}
             };
             /* Activate drag drop functionality in listbox */
             Style itemContainerStyle = new Style(typeof(ListBoxItem));
@@ -281,7 +281,13 @@ namespace UoM_Timetable_Optimiser
 
         private void btn_addSubject_Click(object sender, RoutedEventArgs e)
         {
+            AddSelectedSubject();
+        }
+
+        private void AddSelectedSubject()
+        {
             string subjectCode = txt_subjectAdd.Text;
+            txt_subjectAdd.Clear();
             var stringSplit = subjectCode.Split('-');
             if (stringSplit.Length > 0)
             {
@@ -375,6 +381,8 @@ namespace UoM_Timetable_Optimiser
             }
 
             _generatedTables = optimisedTimeTables;
+            btn_Prev.IsEnabled = false;
+            btn_Next.IsEnabled = true;
             ShowTimetable(0);
         }
 
@@ -445,5 +453,12 @@ namespace UoM_Timetable_Optimiser
             }
         }
 
+        private void txt_subjectAdd_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                AddSelectedSubject();
+            }
+        }
     }
 }
