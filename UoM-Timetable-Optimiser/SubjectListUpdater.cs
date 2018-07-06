@@ -75,7 +75,7 @@ namespace UoM_Timetable_Optimiser
             "UoM Timetable Optimiser");
         private static void SaveSubjectList(int year, int semester, string json)
         {
-            string location = Path.Combine(FolderPath, $"{year}_{semester}.json");
+            string location = Path.Combine(FolderPath, $"SubjectList{year}_{semester}.json");
             Directory.CreateDirectory(FolderPath);
             File.WriteAllText(location, json);
             Console.WriteLine("JSON exported to " + location);
@@ -83,7 +83,13 @@ namespace UoM_Timetable_Optimiser
 
         private static bool TryLoad(int year, int semester)
         {
-            string location = Path.Combine(FolderPath, $"{year}_{semester}.json");
+            if (semester == 2 && year == 2018)
+            {
+                string resourceJson = Encoding.UTF8.GetString(Properties.Resources.SubjectList_2018_2);
+                subjectInformation = JsonConvert.DeserializeObject<List<SubjectListInformation>>(resourceJson);
+                return true;
+            }
+            string location = Path.Combine(FolderPath, $"SubjectList{year}_{semester}.json");
             if (!File.Exists(location))
             {
                 return false;

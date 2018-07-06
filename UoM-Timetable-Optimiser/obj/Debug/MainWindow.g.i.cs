@@ -11,17 +11,13 @@
 
 using Syncfusion;
 using Syncfusion.SfSkinManager;
-using Syncfusion.UI.Xaml.Charts;
 using Syncfusion.UI.Xaml.Controls.DataPager;
 using Syncfusion.UI.Xaml.Grid;
 using Syncfusion.UI.Xaml.Grid.RowFilter;
-using Syncfusion.UI.Xaml.Maps;
 using Syncfusion.UI.Xaml.Schedule;
 using Syncfusion.UI.Xaml.TreeGrid;
 using Syncfusion.Windows;
 using Syncfusion.Windows.Controls.Input;
-using Syncfusion.Windows.Controls.Navigation;
-using Syncfusion.Windows.Controls.RichTextBoxAdv;
 using Syncfusion.Windows.Shared;
 using Syncfusion.Windows.Tools.Controls;
 using System;

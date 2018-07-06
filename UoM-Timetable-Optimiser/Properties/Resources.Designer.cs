@@ -59,5 +59,15 @@ namespace UoM_Timetable_Optimiser.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] SubjectList_2018_2 {
+            get {
+                object obj = ResourceManager.GetObject("SubjectList_2018_2", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }
