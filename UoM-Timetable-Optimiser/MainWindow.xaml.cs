@@ -23,7 +23,7 @@ using Syncfusion.Windows.Shared;
 using Color = System.Drawing.Color;
 
 namespace UoM_Timetable_Optimiser
-{ 
+{
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -81,7 +81,9 @@ namespace UoM_Timetable_Optimiser
             List<string> rsem2Codes = new List<string> { "COMP10001", "PHYC10004", "ENGR10003", "MAST10007" };
             List<string> kevinCodes = new List<string> { "COMP30026", "SWEN30006", "MAST20026", "MAST20005" };
             /* end list */
+#if DEBUG
             LoadSubjects(rohylCodes, Uni.Melbourne);
+#endif
             new Thread(() =>
             {
                 SubjectListUpdater.UpdateCurrentSubjectList();
