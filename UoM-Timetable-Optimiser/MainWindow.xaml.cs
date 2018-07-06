@@ -23,13 +23,7 @@ using Syncfusion.Windows.Shared;
 using Color = System.Drawing.Color;
 
 namespace UoM_Timetable_Optimiser
-{
-    public class Employee
-    {
-        public string Email { get; set; }
-        public string Name { get; set; }
-    }
-
+{ 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -45,14 +39,6 @@ namespace UoM_Timetable_Optimiser
 
         public MainWindow()
         {
-
-            _allSubjects = new ObservableCollection<Subject>();
-            _currentOptimisationStrings = new ObservableCollection<string>();
-            SfSkinManager.ApplyStylesOnApplication = true;
-
-            InitializeComponent();
-            dataGridClasses.ItemsSource = _allSubjects;
-            lstOptimisationStrings.ItemsSource = _currentOptimisationStrings;
             _optimisationStrings = new Dictionary<OptimisationType, string>()
             {
                 {OptimisationType.Cram, "Cram Into Less Days"},
@@ -60,6 +46,14 @@ namespace UoM_Timetable_Optimiser
                 {OptimisationType.LeastClashes, "Least Clashes"},
                 {OptimisationType.LongestRun, "Longest Time Without a Break"}
             };
+            _allSubjects = new ObservableCollection<Subject>();
+            _currentOptimisationStrings = new ObservableCollection<string>();
+            SfSkinManager.ApplyStylesOnApplication = true;
+
+            InitializeComponent();
+            dataGridClasses.ItemsSource = _allSubjects;
+            lstOptimisationStrings.ItemsSource = _currentOptimisationStrings;
+
             /* Activate drag drop functionality in listbox */
             Style itemContainerStyle = new Style(typeof(ListBoxItem));
             itemContainerStyle.Setters.Add(new Setter(ListBoxItem.AllowDropProperty, true));
@@ -87,7 +81,7 @@ namespace UoM_Timetable_Optimiser
             List<string> rsem2Codes = new List<string> { "COMP10001", "PHYC10004", "ENGR10003", "MAST10007" };
             List<string> kevinCodes = new List<string> { "COMP30026", "SWEN30006", "MAST20026", "MAST20005" };
             /* end list */
-            /*LoadSubjects(rohylCodes, Uni.Melbourne); */
+            LoadSubjects(rohylCodes, Uni.Melbourne);
             new Thread(() =>
             {
                 SubjectListUpdater.UpdateCurrentSubjectList();
@@ -287,8 +281,13 @@ namespace UoM_Timetable_Optimiser
         private void AddSelectedSubject()
         {
             string subjectCode = txt_subjectAdd.Text;
-            txt_subjectAdd.Clear();
             var stringSplit = subjectCode.Split('-');
+            txt_subjectAdd.Clear();
+            if (subjectCode.Trim() == string.Empty)
+            {
+                MessageBox.Show("You must enter a subject code in order to add a subject...");
+                return;
+            }
             if (stringSplit.Length > 1)
             {
                 string possibleCode = stringSplit[0];
