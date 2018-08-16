@@ -1,3 +1,5 @@
+![Main UI Example](https://i.imgur.com/39VSW2S.png)
+
 # University of Melbourne Timetable Optimiser
 A WPF application that generates optimised subject timetables, given user-defined restrictions and preferences.
 
@@ -17,4 +19,3 @@ A variety of useful optimisations options are provided, namely:
 ## Optimisation Order
 The general optimisations often have different priorities. These can be intuitively reordered before optimisation in terms of priority. 
 
-![Main UI Example](https://i.imgur.com/39VSW2S.png)
