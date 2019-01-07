@@ -4,10 +4,8 @@
 A WPF application that generates optimised subject timetables, given user-defined restrictions and preferences.
 
 ## Time Restrictions
-One of the most obvious and useful things you can do is try restrict your day spans. Users can specify **both** an 'Earliest Start' and 'Latest Finish' time.
-## General Optimisations
-A variety of useful optimisations options are provided, namely:
-
+Restrict your day spans by specifying **both** an 'Earliest Start' and 'Latest Finish' time.
+## Features
  - Least Clashes
 	 - Aims to reduce the number of clashes present in the timetable. Expectedly the most useful and desired optimisations a user may want.
  - Cram
@@ -19,3 +17,5 @@ A variety of useful optimisations options are provided, namely:
 ## Optimisation Order
 The general optimisations often have different priorities. These can be intuitively reordered before optimisation in terms of priority. 
 
+## Installation
+Download and execute the latest .exe program from the [Releases page](https://github.com/Trontor/UniMelb-Timetable-Optimiser/releases). 
